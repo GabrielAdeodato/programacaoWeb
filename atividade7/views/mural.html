@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mural de Mensagens</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Mural de Mensagens</h1>
+        <a href="/mensagem/cadastro" class="btn btn-success mb-3">Nova Mensagem</a>
+        <a href="/logout" class="btn btn-danger mb-3">Sair</a>
+        <div id="mural" class="row">
+            <!-- As mensagens serão carregadas aqui -->
+        </div>
+    </div>
+
+    <script>
+        async function carregarMensagens() {
+            try {
+                const response = await fetch('/api/mensagens');
+                const mensagens = await response.json();
+
+                const muralDiv = document.getElementById('mural');
+                muralDiv.innerHTML = ''; // Limpa o mural antes de adicionar as mensagens
+
+                mensagens.forEach(mensagem => {
+                    const mensagemDiv = document.createElement('div');
+                    mensagemDiv.classList.add('col-12', 'mb-3');
+                    mensagemDiv.innerHTML = `
+                        <h3>${mensagem.titulo}</h3>
+                        <p><strong>Autor:</strong> ${mensagem.usuario ? mensagem.usuario.nome : 'Desconhecido'}</p>
+                        <p>${mensagem.conteudo}</p>
+                        <a href="/mensagem/${mensagem.id}" class="btn btn-link">Ver detalhes</a>
+                        <hr>
+                    `;
+                    muralDiv.appendChild(mensagemDiv);
+                });
+            } catch (error) {
+                console.error("Erro ao carregar as mensagens:", error);
+            }
+        }
+
+        window.onload = carregarMensagens;
+    </script>
+</body>
+</html>
